@@ -28,6 +28,7 @@ export type Database = {
           crp: string | null
           email: string | null
           phone: string | null
+          profile_gender: 'feminine' | 'masculine'
           timezone: string
           default_session_duration_minutes: number
           active: boolean
@@ -40,6 +41,7 @@ export type Database = {
           crp?: string | null
           email?: string | null
           phone?: string | null
+          profile_gender?: 'feminine' | 'masculine'
           timezone?: string
           default_session_duration_minutes?: number
           active?: boolean

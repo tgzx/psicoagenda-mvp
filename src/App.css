@@ -855,6 +855,10 @@ select {
   color: var(--ink);
 }
 
+.signout-nav-button {
+  margin-top: 10px;
+}
+
 .admin-content {
   display: grid;
   gap: 18px;
@@ -891,6 +895,11 @@ select {
   padding: 18px;
 }
 
+.admin-list-panel {
+  display: grid;
+  min-height: 0;
+}
+
 .panel.wide {
   grid-column: span 2;
 }
@@ -915,6 +924,41 @@ select {
   border-radius: var(--card-radius);
   background: #fbfdfc;
   padding: 16px;
+}
+
+.inline-edit-form {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 16px;
+  border: 1px solid #cfe0d9;
+  border-radius: var(--card-radius);
+  background: #ffffff;
+  padding: 16px;
+}
+
+.list-panel-header {
+  align-items: center;
+}
+
+.compact-select {
+  display: grid;
+  gap: 5px;
+  min-width: 170px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.compact-select select,
+.status-select select {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  padding: 0 10px;
+  font: inherit;
+  font-weight: 750;
 }
 
 .manual-session-header,
@@ -980,6 +1024,13 @@ select {
   gap: 10px;
 }
 
+.scroll-list {
+  max-height: min(62vh, 640px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+}
+
 .appointment-row,
 .patient-row,
 .integration-row {
@@ -997,17 +1048,39 @@ select {
 }
 
 .appointment-row.rich {
-  grid-template-columns: 64px minmax(0, 1fr) auto auto;
+  grid-template-columns: 64px minmax(0, 1fr) minmax(150px, auto) auto;
+  align-items: end;
+}
+
+.appointment-row.actionable,
+.patient-row.actionable {
+  cursor: pointer;
+}
+
+.appointment-row.actionable:hover,
+.patient-row.actionable:hover,
+.appointment-row.actionable:focus-visible,
+.patient-row.actionable:focus-visible {
+  border-color: #a8c4ba;
+  background: #ffffff;
+  outline: none;
 }
 
 .row-actions {
   display: flex;
   flex-wrap: wrap;
+  align-self: end;
+  align-items: flex-end;
   justify-content: flex-end;
   gap: 8px;
 }
 
-.row-actions button {
+.row-actions button,
+.icon-link-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   min-height: 34px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -1018,6 +1091,49 @@ select {
   font-size: 13px;
   font-weight: 750;
   cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.whatsapp-button {
+  border-color: #cfe1da;
+  color: #16453f;
+}
+
+.row-actions button:hover,
+.icon-link-button:hover {
+  border-color: #a8c4ba;
+  background: #edf4f0;
+}
+
+.status-select,
+.treatment-status-select {
+  display: grid;
+  align-self: end;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.treatment-status-select {
+  min-width: 160px;
+}
+
+.treatment-status-select span {
+  display: block;
+}
+
+.treatment-status-select select {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #edf4f0;
+  color: #16453f;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 850;
 }
 
 .text-link {
@@ -1026,7 +1142,13 @@ select {
   text-decoration: none;
 }
 
-.text-link:hover {
+.inline-contact-link {
+  color: #52615c;
+  text-decoration: none;
+}
+
+.text-link:hover,
+.inline-contact-link:hover {
   text-decoration: underline;
 }
 
@@ -1057,8 +1179,18 @@ select {
   font-weight: 900;
 }
 
-.time {
-  height: 42px;
+.appointment-row .time {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  width: 58px;
+  min-width: 58px;
+  padding: 0;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+  line-height: 1;
 }
 
 .avatar {
@@ -1121,6 +1253,123 @@ select {
   gap: 16px;
 }
 
+.care-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.care-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+  gap: 16px;
+}
+
+.back-button {
+  width: fit-content;
+}
+
+.patient-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.patient-facts span,
+.patient-facts a,
+.list-hint {
+  color: var(--muted);
+}
+
+.patient-facts span,
+.patient-facts a {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ffffff;
+  padding: 7px 10px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.rich-editor {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.rich-editor.disabled {
+  background: #f6faf8;
+}
+
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  min-height: 44px;
+  border-bottom: 1px solid var(--line);
+  background: #f8fbfa;
+  padding: 7px;
+}
+
+.editor-toolbar button {
+  display: grid;
+  min-width: 32px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.editor-toolbar button:hover {
+  border-color: #a8c4ba;
+  background: #edf4f0;
+}
+
+.rich-editor.disabled .editor-toolbar button {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.rich-editor-textarea {
+  min-height: 220px;
+  width: 100%;
+  border: 0;
+  outline: none;
+  padding: 14px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  line-height: 1.55;
+  resize: vertical;
+  overflow-y: auto;
+}
+
+.rich-editor-textarea::placeholder {
+  color: var(--muted);
+}
+
+.rich-editor-textarea:disabled {
+  cursor: not-allowed;
+  color: var(--muted);
+}
+
+.draft-status {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.draft-status.error {
+  color: #8a3c2a;
+}
+
 .section-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -1178,8 +1427,10 @@ select {
 }
 
 .note-actions {
+  display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 10px;
 }
 
 .settings-grid {
@@ -1259,6 +1510,7 @@ textarea:focus-visible {
   .booking-layout,
   .admin-shell,
   .record-layout,
+  .care-summary,
   .settings-grid {
     grid-template-columns: 1fr;
   }
@@ -1314,6 +1566,14 @@ textarea:focus-visible {
     flex-direction: column;
   }
 
+  .list-panel-header {
+    align-items: stretch;
+  }
+
+  .compact-select {
+    width: 100%;
+  }
+
   .admin-actions {
     width: 100%;
   }
@@ -1330,6 +1590,10 @@ textarea:focus-visible {
   .appointment-row,
   .appointment-row.rich {
     grid-template-columns: 1fr;
+  }
+
+  .scroll-list {
+    max-height: 68vh;
   }
 
   .manual-session-grid {

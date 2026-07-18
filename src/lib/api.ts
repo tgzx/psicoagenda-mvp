@@ -24,6 +24,7 @@ export type PublicBookingPage = {
     crp: string | null
     email: string | null
     phone: string | null
+    profile_gender: 'feminine' | 'masculine'
     photo_url: string | null
     timezone: string
     default_session_duration_minutes: number
@@ -59,6 +60,7 @@ export type AppointmentWithPatient = {
 
 export type Patient = {
   id: string
+  professional_id: string
   full_name: string
   preferred_name: string | null
   email: string | null
@@ -71,6 +73,7 @@ export type Patient = {
 export type TreatmentEpisode = {
   id: string
   patient_id: string
+  professional_id: string
   status: string
   main_complaint: string | null
   therapeutic_goals: string | null
@@ -334,6 +337,64 @@ export async function updateAppointmentStatus(id: string, status: string) {
   if (error) throw error
 }
 
+export async function updateAppointmentDetails(input: {
+  id: string
+  professionalId: string
+  startsAt: string
+  durationMinutes: number
+  status: string
+}) {
+  const client = requireSupabase()
+  const startsAt = new Date(input.startsAt)
+  const endsAt = new Date(startsAt.getTime() + input.durationMinutes * 60_000)
+  const { error } = await (client as any)
+    .from('appointments')
+    .update({
+      starts_at: startsAt.toISOString(),
+      ends_at: endsAt.toISOString(),
+      status: input.status,
+    })
+    .eq('id', input.id)
+    .eq('professional_id', input.professionalId)
+  if (error) throw error
+}
+
+export async function updatePatient(input: {
+  id: string
+  professionalId: string
+  fullName: string
+  phone: string
+  email: string
+  firstContactNote: string
+}) {
+  const client = requireSupabase()
+  const { error } = await (client as any)
+    .from('patients')
+    .update({
+      full_name: input.fullName.trim(),
+      phone: input.phone.trim() || null,
+      email: input.email.trim().toLowerCase() || null,
+      first_contact_note: input.firstContactNote.trim() || null,
+    })
+    .eq('id', input.id)
+    .eq('professional_id', input.professionalId)
+  if (error) throw error
+}
+
+export async function updateTreatmentStatus(input: {
+  id: string
+  professionalId: string
+  status: string
+}) {
+  const client = requireSupabase()
+  const { error } = await (client as any)
+    .from('treatment_episodes')
+    .update({ status: input.status })
+    .eq('id', input.id)
+    .eq('professional_id', input.professionalId)
+  if (error) throw error
+}
+
 export async function createManualSession(input: {
   professionalId: string
   patientId?: string | null
@@ -470,6 +531,7 @@ export async function saveProfile(input: {
   professionalId: string
   name: string
   crp: string
+  profileGender: 'feminine' | 'masculine'
   headline: string
   bio: string
   phone: string
@@ -479,7 +541,7 @@ export async function saveProfile(input: {
   const [professional, profile] = await Promise.all([
     (client as any)
       .from('professionals')
-      .update({ name: input.name, crp: input.crp, phone: input.phone })
+      .update({ name: input.name, crp: input.crp, phone: input.phone, profile_gender: input.profileGender })
       .eq('id', input.professionalId),
     (client as any)
       .from('public_profiles')
