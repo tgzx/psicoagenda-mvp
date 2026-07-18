@@ -85,7 +85,7 @@ function App() {
     try {
       setPage(await loadPublicBookingPage())
     } catch (error) {
-      notify(error instanceof Error ? error.message : 'Falha ao carregar dados do Supabase.')
+      notify(readableError(error))
     } finally {
       if (!options?.silent) setPublicLoading(false)
     }
@@ -1163,7 +1163,15 @@ function treatmentStatusLabel(status: string) {
 }
 
 function readableError(error: unknown) {
-  const message = error instanceof Error ? error.message : String(error)
+  let message = error instanceof Error ? error.message : ''
+  if (!message && typeof error === 'string') message = error
+  if (!message && error && typeof error === 'object') {
+    const candidate = error as { message?: unknown; error_description?: unknown; details?: unknown; hint?: unknown }
+    message = [candidate.message, candidate.error_description, candidate.details, candidate.hint]
+      .filter((part): part is string => typeof part === 'string' && part.trim().length > 0)
+      .join(' ')
+  }
+  if (!message) message = 'Falha ao carregar dados do Supabase.'
   if (message.includes('slot_conflict')) return 'Esse horário acabou de ser reservado. Escolha outro.'
   if (message.includes('hold_expired')) return 'Essa reserva temporária expirou. Escolha o horário novamente.'
   if (message.includes('slot_outside_availability')) return 'Horário fora da disponibilidade publicada.'

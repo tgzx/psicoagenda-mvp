@@ -34,7 +34,17 @@ export default defineConfig({
         ],
       },
       workbox: {
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/.*$/i,
+            handler: 'NetworkOnly',
+            options: {
+              cacheName: 'supabase-network-only',
+            },
+          },
+        ],
       },
     }),
   ],

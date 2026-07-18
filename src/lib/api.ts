@@ -1,5 +1,5 @@
 import type { Session } from '@supabase/supabase-js'
-import { supabase } from './supabase'
+import { supabase, supabasePublishableKey, supabaseUrl } from './supabase'
 
 export type PublicSlot = {
   starts_at: string
@@ -109,6 +109,22 @@ export const demoLogin = {
   password: 'Teste123456!',
 }
 
+export function readableError(error: unknown, fallback = 'Falha ao carregar dados do Supabase.') {
+  if (error instanceof Error && error.message) return error.message
+  if (typeof error === 'string' && error.trim()) return error
+  if (error && typeof error === 'object') {
+    const candidate = error as { message?: unknown; error_description?: unknown; details?: unknown; hint?: unknown }
+    const parts = [candidate.message, candidate.error_description, candidate.details, candidate.hint]
+      .filter((part): part is string => typeof part === 'string' && part.trim().length > 0)
+    if (parts.length) return parts.join(' ')
+  }
+  return fallback
+}
+
+function throwReadable(error: unknown, fallback?: string): never {
+  throw new Error(readableError(error, fallback))
+}
+
 export function requireSupabase() {
   if (!supabase) {
     throw new Error('Supabase não está configurado em .env.local.')
@@ -141,7 +157,19 @@ export async function loadPublicBookingPage(slug = 'dra-clara-menezes') {
     p_slug: slug,
     p_days: 21,
   } as never)
-  if (error) throw error
+  if (error) {
+    const fallback = await fetch(`${supabaseUrl}/rest/v1/rpc/get_public_booking_page`, {
+      method: 'POST',
+      headers: {
+        apikey: supabasePublishableKey,
+        Authorization: `Bearer ${supabasePublishableKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ p_slug: slug, p_days: 21 }),
+    })
+    if (fallback.ok) return await fallback.json() as PublicBookingPage
+    throwReadable(await fallback.text(), readableError(error))
+  }
   return data as unknown as PublicBookingPage
 }
 
