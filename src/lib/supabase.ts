@@ -1,8 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from './database.types'
 
-export const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-export const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+function cleanEnv(value: string | undefined) {
+  return (value ?? '').replace(/^\uFEFF/, '').trim()
+}
+
+export const supabaseUrl = cleanEnv(import.meta.env.VITE_SUPABASE_URL)
+export const supabasePublishableKey = cleanEnv(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY)
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabasePublishableKey)
 
